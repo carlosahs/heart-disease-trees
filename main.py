@@ -10,6 +10,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn import tree
 
 # Column names from dataset
@@ -58,18 +59,21 @@ dtree_model = DecisionTreeClassifier(max_depth=5)
 dtree_model.fit(X_train, y_train)
 
 y_pred = dtree_model.predict(X_test)
+dt_confusion_matrix = confusion_matrix(y_test, y_pred)
 
 print("Decision tree accuracy score:", accuracy_score(y_test, y_pred))
+print("Confusion matrix:")
+print(dt_confusion_matrix)
 
-# Visualize decision tree model
-diagram = tree.plot_tree(
-    dtree_model,
-    feature_names=X.columns,
-    class_names=["Heart disease", "No heart disease"],
-    filled=True
-)
+# # Visualize decision tree model
+# diagram = tree.plot_tree(
+#     dtree_model,
+#     feature_names=X.columns,
+#     class_names=["Heart disease", "No heart disease"],
+#     filled=True
+# )
 
-plt.show()
+# plt.show()
 
 # Model to predict heart disease diagnosis with random forest
 rforest_model = RandomForestClassifier(
@@ -81,8 +85,11 @@ rforest_model = RandomForestClassifier(
 rforest_model.fit(X_train, y_train.values.flatten())
 
 y_pred = rforest_model.predict(X_test)
+rf_confusion_matrix = confusion_matrix(y_test, y_pred)
 
 print("Random forest accuracy score:", accuracy_score(y_test, y_pred))
+print("Confusion matrix:")
+print(rf_confusion_matrix)
 
 # Hyperparameter optimization for random forest
 
@@ -112,6 +119,18 @@ rforest_grid.fit(X_train, y_train.values.flatten())
 
 print(rforest_grid.best_params_)
 
+orf_confusion_matrix = confusion_matrix(y_test, y_pred)
+
 # The optimized random forest is less prone to overfitting due to hyperparameter tuning
 # and the cross validation of each model in each hyperparameter combination
 print("Optimized random forest accuracy:", rforest_grid.score(X_test, y_test))
+print("Confusion matrix:")
+print(orf_confusion_matrix)
+
+# # Plot confusion matrices
+# ConfusionMatrixDisplay(
+#     dt_confusion_matrix,
+#     display_labels=["heart disease", "no heart disease"]
+# ).plot()
+# ConfusionMatrixDisplay(rf_confusion_matrix, display_labels=["heart disease", "no heart disease"])
+# ConfusionMatrixDisplay(orf_confusion_matrix, display_labels=["heart disease", "no heart disease"])
